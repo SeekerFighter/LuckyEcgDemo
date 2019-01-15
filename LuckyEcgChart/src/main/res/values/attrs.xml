@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ECGChartView">
+
+        <attr name="isTouchable" format="boolean"/><!--是否可以响应触摸-->
+        <attr name="yOuterCellCounts" format="integer"/><!--Y轴大格子个数-->
+
+    </declare-styleable>
+
+
+</resources>
