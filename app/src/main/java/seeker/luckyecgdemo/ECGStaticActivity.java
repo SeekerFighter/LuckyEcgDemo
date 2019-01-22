@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.SeekBar;
 
 import com.seeker.luckychart.charts.ECGChartView;
@@ -34,14 +35,15 @@ public class ECGStaticActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ecg);
-        findViewById(R.id.btn_group).setVisibility(View.VISIBLE);
         ecgChartView = findViewById(R.id.ecgChart);
         ecgChartView.setFrameRate(0);
         ecgChartView.setTouchable(true);
         ecgChartView.setRenderMode(ISurface.RENDERMODE_WHEN_DIRTY);
+
+        ((ViewStub)findViewById(R.id.staticVS)).inflate();
+
         seekBar = findViewById(R.id.seekbar);
-        seekBar.setVisibility(View.VISIBLE);
-        new LoadTask().execute();
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -63,10 +65,11 @@ public class ECGStaticActivity extends AppCompatActivity {
             @Override
             public void onChanged(Coordinateport visiblePort, Coordinateport maxPort) {
                 float progress = visiblePort.left / (maxPort.width()-visiblePort.width());
-                int centerX = (int) visiblePort.centerX();
                 seekBar.setProgress((int) (seekBar.getMax() * progress));
             }
         });
+
+        new LoadTask().execute();
     }
 
     @Override

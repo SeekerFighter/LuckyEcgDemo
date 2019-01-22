@@ -5,7 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewStub;
 
+import com.seeker.luckychart.annotation.UIMode;
 import com.seeker.luckychart.charts.AbstractChartView;
 import com.seeker.luckychart.charts.ECGChartView;
 import com.seeker.luckychart.model.ECGPointValue;
@@ -33,12 +35,9 @@ public class ECGRealTimeActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ecg);
-        findViewById(R.id.btn_group).setVisibility(View.GONE);
+        ((ViewStub)findViewById(R.id.realTimeVS)).inflate();
         ecgChartView = findViewById(R.id.ecgChart);
-        new LoadTask().execute();
         ecgChartView.initDefaultChartData(true,true);
-        ecgChartView.setDrawNoise(true);
-        ecgChartView.setDrawRPeak(true);
         ecgChartView.setFrameRenderCallback(new AbstractChartView.FrameRenderCallback() {
             @Override
             public void onPrepareNextFrame(long duration) {
@@ -46,10 +45,34 @@ public class ECGRealTimeActivity extends AppCompatActivity {
                     return;
                 }
                 int count = 4;
-                ecgChartView.updatePointsToRender(Arrays.copyOfRange(mValues,index,index+count));
-                index += count;
+                if (index+count < mValues.length) {
+                    ecgChartView.updatePointsToRender(Arrays.copyOfRange(mValues, index, index + count));
+                    index += count;
+                }
             }
         });
+
+        findViewById(R.id.translate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ecgChartView.onPause();
+                ecgChartView.reset();
+                ecgChartView.setMode(UIMode.TRANSLATE);
+                ecgChartView.onResume();
+            }
+        });
+
+        findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ecgChartView.onPause();
+                ecgChartView.reset();
+                ecgChartView.setMode(UIMode.ERASE);
+                ecgChartView.onResume();
+            }
+        });
+
+        new LoadTask().execute();
 
     }
 
