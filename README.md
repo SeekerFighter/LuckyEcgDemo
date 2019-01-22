@@ -34,15 +34,17 @@
         });
 ```
     2、静态模式下添加如下代码：
-    (1)设置静态模式
+    
 ```
+        (1)设置静态模式
         ecgChartView = findViewById(R.id.ecgChart);
         ecgChartView.setFrameRate(0);
         ecgChartView.setTouchable(true);
         ecgChartView.setRenderMode(ISurface.RENDERMODE_WHEN_DIRTY);
 ```
-    (2)设置数据源
+    
 ```
+        (2)设置数据源
         ECGPointContainer container = ECGPointContainer.create(values);
         container.setDrawRpeak(true);
         container.setDrawNoise(true);
