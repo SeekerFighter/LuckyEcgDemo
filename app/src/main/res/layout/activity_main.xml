@@ -29,4 +29,12 @@
         android:onClick="onBtnClick"
         android:text="静态心电图"/>
 
+    <Button
+        android:id="@+id/createimage_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="onBtnClick"
+        android:text="生成心电图片"/>
+
 </LinearLayout>

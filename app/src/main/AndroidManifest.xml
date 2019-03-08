@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="seeker.luckyecgdemo">
 
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,6 +24,7 @@
         <activity android:name=".ScatterActivity" android:screenOrientation="portrait" android:label="洛伦兹散点图"/>
         <activity android:name=".ECGRealTimeActivity" android:screenOrientation="portrait" android:label="实时心电图"/>
         <activity android:name=".ECGStaticActivity" android:screenOrientation="portrait" android:label="静态心电图，可点击操作"/>
+        <activity android:name=".EcgTransformImageActivity" android:screenOrientation="portrait" android:label="转成心电图片"/>
     </application>
 
 </manifest>

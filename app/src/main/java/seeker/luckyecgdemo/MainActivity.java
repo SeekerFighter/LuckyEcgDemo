@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.ecgStatic_btn:
                 intent.setClass(this,ECGStaticActivity.class);
                 break;
+            case R.id.createimage_btn:
+                intent.setClass(this,EcgTransformImageActivity.class);
+                break;
         }
         startActivity(intent);
     }
