@@ -44,4 +44,11 @@ public abstract class Transformer {
         return dataContentRect.bottom - pixelOffset;
     }
 
+    public boolean needDraw(float currentY,float nextY){
+        if (currentY == nextY){
+            return !(currentY == dataContentRect.top) && !(currentY == dataContentRect.bottom);
+        }
+        return true;
+    }
+
 }
