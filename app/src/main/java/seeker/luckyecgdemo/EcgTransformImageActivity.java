@@ -1,14 +1,11 @@
 package seeker.luckyecgdemo;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.seeker.luckychart.model.ECGPointValue;
-import com.seeker.luckychart.model.chartdata.ECGChartData;
-import com.seeker.luckychart.model.container.ECGPointContainer;
 import com.seeker.luckychart.soft.LuckySoftRenderer;
 import com.seeker.luckychart.utils.ChartLogger;
 
@@ -48,21 +45,11 @@ public class EcgTransformImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ECGPointValue[] values) {
-            ChartLogger.d("onPostExecute() called:"+values.length);
-            LuckySoftRenderer.instantiate(EcgTransformImageActivity.this,values)
-                    .setOnRenderCallback(new LuckySoftRenderer.OnRenderCallback() {
-                        @Override
-                        public void onRenderStart() {
-
-                        }
-
-                        @Override
-                        public void onRenderComplete(Bitmap bitmap) {
-                            imageView.setImageBitmap(bitmap);
-                        }
-                    })
-//                    .setMaxDataValue(3)
-                    .startRender();
+            ChartLogger.d("onPostExecute() called:" + values.length);
+            imageView.setImageBitmap(
+                    LuckySoftRenderer.instantiate(EcgTransformImageActivity.this, values)
+//                            .setMaxDataValue(2f)
+                            .startRender());
         }
     }
 }

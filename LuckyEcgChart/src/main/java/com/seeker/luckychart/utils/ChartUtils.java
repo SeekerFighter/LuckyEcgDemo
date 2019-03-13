@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
@@ -37,6 +38,13 @@ public final class ChartUtils {
         return (int) (dp * density + 0.5f);
     }
 
+    public static int sp2px(float scaledDensity, float sp) {
+        if (sp == 0) {
+            return 0;
+        }
+        return (int) (sp * scaledDensity + 0.5f);
+    }
+
     public static boolean copyof(@NonNull char[] src, @NonNull char[] dst){
         System.arraycopy(src,0,dst,0,Math.min(src.length,dst.length));
         return true;
@@ -44,6 +52,12 @@ public final class ChartUtils {
 
     public static float measureText(@NonNull char[] src, Paint paint){
         return paint.measureText(src,0,src.length);
+    }
+
+    public static int getTextHeight(Paint paint, String text){
+        Rect rect = new Rect();
+        paint.getTextBounds(text, 0, text.length()-1, rect);
+        return rect.height();
     }
 
     /**

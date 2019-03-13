@@ -5,12 +5,15 @@ package com.seeker.luckychart.soft;
  * @date 2019/3/4/004  15:06
  * @describe TODO
  */
-class LuckySoftStrategy implements SoftStrategy {
+public class LuckySoftStrategy implements SoftStrategy {
 
-    private int sumPointCounts;
+    private int pointCount;
 
-    LuckySoftStrategy(int counts){
-        this.sumPointCounts = counts;
+    private float maxDataValueForMv;//默认每行所表示的上下最大毫伏数 (maxDataValueForMv,-maxDataValueForMv)
+
+    public LuckySoftStrategy(int pointCount){
+        this.pointCount = pointCount;
+        this.maxDataValueForMv = 1.5f;
     }
 
     @Override
@@ -25,7 +28,13 @@ class LuckySoftStrategy implements SoftStrategy {
 
     @Override
     public int gridCountPerRow() {
-        return 6;
+        if (maxDataValueForMv > 2f){
+            return 10;
+        }else if (maxDataValueForMv > 1.5f){
+            return 8;
+        }else {
+            return 6;
+        }
     }
 
     @Override
@@ -35,27 +44,37 @@ class LuckySoftStrategy implements SoftStrategy {
 
     @Override
     public int pointsPerRow() {
-        return 250 * 10;// 250/s,10s数据
+        return pointsPerSecond() * secondsPerRow();// 250/s,10s数据
+    }
+
+    @Override
+    public int secondsPerRow() {
+        return 10;
+    }
+
+    @Override
+    public int pointsPerSecond() {
+        return 250;
     }
 
     @Override
     public int pixelPerCell() {
-        return 5;//一个小格占5像素
+        return 10;//一个小格占5像素
     }
 
     @Override
     public float pixelPerPoint() {
-        return 0.5f;//0.5像素/每点
+        return 1f;//0.5像素/每点
     }
 
     @Override
     public int totalRows() {
-        return sumPointCounts%pointsPerRow() == 0?sumPointCounts/pointsPerRow():sumPointCounts/pointsPerRow()+1;
+        return pointCount%pointsPerRow() == 0?pointCount/pointsPerRow():pointCount/pointsPerRow()+1;//总共12行，2分钟数据
     }
 
     @Override
     public int horizontalPadding() {
-        return 50;//水平方向，左右边距50个像素
+        return 20;//水平方向，左右边距20个像素
     }
 
     @Override
@@ -65,16 +84,20 @@ class LuckySoftStrategy implements SoftStrategy {
 
     @Override
     public float maxDataValueForMv() {
-        return cellCountPerGrid()*gridCountPerRow()/cellCountsPerMv()*1.5f;
+        return maxDataValueForMv;
     }
 
     @Override
     public int cellCountsPerMv() {
-        return 15;
+        return 10;
     }
 
     @Override
     public Transformer getTransformer() {
         return new Transformer() {};
+    }
+
+    public void setMaxDataValueForMv(float maxDataValueForMv) {
+        this.maxDataValueForMv = maxDataValueForMv;
     }
 }

@@ -17,11 +17,13 @@ import com.seeker.luckychart.utils.ChartUtils;
  */
 class SoftAxesRenderer extends RealRenderer{
 
-    private static final int LINE_COLOR = Color.parseColor("#FCC4C2");
+    private static final int LINE_COLOR = Color.parseColor("#57C2FB");
 
     private Paint rowPaint;//行与行之间的画笔
 
     private Paint cellPaint;//网格画笔
+
+    private Paint pointPaint;//点画笔
 
     SoftAxesRenderer(@NonNull Context context, @NonNull ECGPointValue[] values) {
         super(context, values);
@@ -47,25 +49,41 @@ class SoftAxesRenderer extends RealRenderer{
 
         for (int i = 0;i<=vCellCounts;i++){
             if (i == 0){
-                canvas.drawLine(startX,startY,endX,startY,rowPaint);
+                canvas.drawLine(startX,startY+rowPaint.getStrokeWidth()/2,endX,startY+rowPaint.getStrokeWidth()/2,rowPaint);
             }else if (i == vCellCounts){
-                canvas.drawLine(startX,endY,endX,endY,rowPaint);
+                canvas.drawLine(startX,endY-rowPaint.getStrokeWidth()/2,endX,endY-rowPaint.getStrokeWidth()/2,rowPaint);
             }else if (i % (mSoftStrategy.cellCountPerGrid()*mSoftStrategy.gridCountPerRow()) == 0){
                 canvas.drawLine(startX,startY+i*cellPixel,endX,startY+i*cellPixel,rowPaint);
             }else if (i % mSoftStrategy.cellCountPerGrid() == 0){
                 canvas.drawLine(startX,startY+i*cellPixel,endX,startY+i*cellPixel,cellPaint);
+            }else {
+                drawHorizontalPoint(canvas,startY+i*cellPixel,startX,endX);
             }
         }
     }
 
-    private void drawVerticalLine(Canvas canvas,int startX,int endX,int startY,int endY){
+    private void drawHorizontalPoint(Canvas canvas,float y,int startX,int endX){
         int cellPixel = mSoftStrategy.pixelPerCell();
         int hCellCounts = (endX-startX)/cellPixel;
         for (int i = 0;i<=hCellCounts;i++){
+            if (i % (mSoftStrategy.cellCountPerGrid()) == 0 || i == hCellCounts){
+                continue;
+            }
+            canvas.drawPoint(startX+i*cellPixel,y,pointPaint);
+        }
+    }
+
+
+    private void drawVerticalLine(Canvas canvas,int startX,int endX,int startY,int endY){
+
+        int cellPixel = mSoftStrategy.pixelPerCell();
+        int hCellCounts = (endX-startX)/cellPixel;
+
+        for (int i = 0;i<=hCellCounts;i++){
             if (i == 0){
-                canvas.drawLine(startX,startY,startX,endY,cellPaint);
+                canvas.drawLine(startX,startY,startX,endY,rowPaint);
             }else if (i == hCellCounts){
-                canvas.drawLine(endX,startY,endX,endY,cellPaint);
+                canvas.drawLine(endX,startY,endX,endY,rowPaint);
             }else if (i % (mSoftStrategy.cellCountPerGrid()) == 0){
                 canvas.drawLine(startX+i*cellPixel,startY,startX+i*cellPixel,endY,cellPaint);
             }
@@ -76,13 +94,19 @@ class SoftAxesRenderer extends RealRenderer{
         rowPaint = new Paint();
         rowPaint.setAntiAlias(true);
         rowPaint.setColor(LINE_COLOR);
-        rowPaint.setStrokeWidth(ChartUtils.dp2px(mDensity,1f));
+        rowPaint.setStrokeWidth(ChartUtils.dp2px(mDensity,2f));
 
         cellPaint = new Paint();
         cellPaint.setAntiAlias(true);
         cellPaint.setColor(LINE_COLOR);
-        cellPaint.setAlpha(150);
-        cellPaint.setStrokeWidth(ChartUtils.dp2px(mDensity,0.15f));
+        cellPaint.setAlpha(200);
+        cellPaint.setStrokeWidth(ChartUtils.dp2px(mDensity,0.5f));
+
+        pointPaint = new Paint();
+        pointPaint.setAntiAlias(true);
+        pointPaint.setColor(LINE_COLOR);
+        pointPaint.setAlpha(200);
+        pointPaint.setStrokeWidth(2);
     }
 
 }

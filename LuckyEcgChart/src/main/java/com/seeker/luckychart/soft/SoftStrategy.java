@@ -13,6 +13,10 @@ public interface SoftStrategy {
 
     int pointsPerRow();//一行总共显示几个点
 
+    int secondsPerRow();//一行显示几秒
+
+    int pointsPerSecond();//一秒多少个点
+
     int gridCountPerRow();//每行显示几个大格子
 
     int cellCountPerGrid();//每个大格子由几个小格组成

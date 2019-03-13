@@ -29,15 +29,12 @@ public class LuckySoftRenderer {
 
     private Canvas softwareCanvas;
 
-    private OnRenderCallback mRenderCallback;
-
     private LuckySoftRenderer(Context context, ECGPointValue[] values, SoftStrategy softStrategy, RealRenderer dataRenderer, RealRenderer axesArenderer) {
         this.mSoftStrategy = softStrategy != null?softStrategy:new LuckySoftStrategy(values.length);
         this.mDataRenerer = dataRenderer != null?dataRenderer:new SoftDataRenderer(context, values);
         this.mAxesRenderer = axesArenderer != null?axesArenderer:new SoftAxesRenderer(context, values);
         this.mDataRenerer.setSoftStrategy(mSoftStrategy);
         this.mAxesRenderer.setSoftStrategy(mSoftStrategy);
-        this.initSoft();
     }
 
     public static LuckySoftRenderer instantiate(@NonNull Context context,@NonNull ECGPointValue[] values) {
@@ -62,7 +59,9 @@ public class LuckySoftRenderer {
 
     public LuckySoftRenderer setMaxDataValue(float maxDataValue) {
         if (!Float.isNaN(maxDataValue)) {
-            this.mDataRenerer.setMaxDataValue(maxDataValue);
+            if (mSoftStrategy instanceof  LuckySoftStrategy){
+                ((LuckySoftStrategy) mSoftStrategy).setMaxDataValueForMv(maxDataValue);
+            }
         }
         return this;
     }
@@ -70,26 +69,11 @@ public class LuckySoftRenderer {
     /**
      * 开始绘制
      */
-    public void startRender(){
-        if (mRenderCallback != null){
-            mRenderCallback.onRenderStart();
-        }
+    public Bitmap startRender(){
+        this.initSoft();
         softwareCanvas.drawColor(Color.WHITE);
         mAxesRenderer.draw(softwareCanvas);
         mDataRenerer.draw(softwareCanvas);
-        if (mRenderCallback != null){
-            mRenderCallback.onRenderComplete(softwareBitmap);
-        }
+        return softwareBitmap;
     }
-
-    public LuckySoftRenderer setOnRenderCallback(OnRenderCallback mRenderCallback) {
-        this.mRenderCallback = mRenderCallback;
-        return this;
-    }
-
-    public interface OnRenderCallback{
-        void onRenderStart();
-        void onRenderComplete(Bitmap bitmap);
-    }
-
 }

@@ -22,22 +22,18 @@ public abstract class RealRenderer {
 
     protected float mDensity;
 
-    public float maxDataValue;
+    protected float mScaleDensity;
 
     public RealRenderer(@NonNull Context context, @NonNull ECGPointValue[] values){
         this.mContext = context;
         this.mEcgData = values;
         final DisplayMetrics dm = context.getResources().getDisplayMetrics();
         this.mDensity = dm.density;
+        this.mScaleDensity = dm.scaledDensity;
     }
 
     void setSoftStrategy(@NonNull SoftStrategy softStrategy){
         this.mSoftStrategy = softStrategy;
-        this.setMaxDataValue(mSoftStrategy.maxDataValueForMv());
-    }
-
-    void setMaxDataValue(float maxDataValue) {
-        this.maxDataValue = maxDataValue;
     }
 
     public abstract void draw(Canvas canvas);
