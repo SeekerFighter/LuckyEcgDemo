@@ -9,13 +9,11 @@ import com.seeker.luckychart.utils.ChartLogger;
  */
 public class ECGRenderStrategyImpl implements ECGRenderStrategy{
 
-    private static final String TAG = "ECGRenderStrategyImpl";
-
     private static final int DEFAULT_CELLPIXEL = 10;//每个小格固定10像素
 
     public static final int DEFAULT_OUTER_CELLCOUNTS_Y = 8;//默认Y轴方向显示大格数
 
-    private static final int DEFAULT_MAX_OUTERCELL_COUNT = 25;//默认最大有25个大格子
+    private static final int DEFAULT_MAX_OUTERCELL_COUNT = 20;//默认最大有20个大格子
 
     private int xCellCounts;//x轴方向小格总数
 
@@ -52,7 +50,7 @@ public class ECGRenderStrategyImpl implements ECGRenderStrategy{
         }
         result[0] = this.measuredWith = (int) (xCellCounts * getCellWidth());
         result[1] = this.measuredHeight = (int) (getYCellCounts() * getCellWidth());
-        ChartLogger.vTag(TAG,"onViewMeasured() called: xCellCounts = "+xCellCounts+",cellPixel = "+cellPixel
+        ChartLogger.d("onViewMeasured() called: xCellCounts = "+xCellCounts+",cellPixel = "+cellPixel
                 +",width = "+result[0]+",height = "+result[1]
                 +",measuredWithSize = "+measuredWithSize+",measuredHeightSize = "+measuredHeightSize);
     }

@@ -4,12 +4,10 @@ import android.graphics.Color;
 import android.opengl.GLES20;
 import android.util.SparseArray;
 
-import com.seeker.luckychart.utils.ChartLogger;
-
 import org.rajawali3d.BufferInfo;
 import org.rajawali3d.Object3D;
 import org.rajawali3d.materials.Material;
-
+import org.rajawali3d.materials.MaterialManager;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -41,7 +39,6 @@ public class ECGLine3D extends Object3D{
         isContainer(false);
         setDoubleSided(true);
         setTransparent(true);
-
         init();
     }
 
@@ -72,7 +69,7 @@ public class ECGLine3D extends Object3D{
 
         getGeometry().changeBufferUsage(mDataVertexBufferInfo,GLES20.GL_DYNAMIC_DRAW);
         getGeometry().changeBufferUsage(mColorVertexBufferInfo,GLES20.GL_DYNAMIC_DRAW);
-        getGeometry().changeBufferUsage(mColorVertexBufferInfo,GLES20.GL_STATIC_DRAW);
+        getGeometry().changeBufferUsage(mIndexBufferInfo,GLES20.GL_STATIC_DRAW);
     }
 
     public void addVertexToBuffer(float x,float y,int color,int index) {
@@ -129,6 +126,12 @@ public class ECGLine3D extends Object3D{
 
     public void clearChild(){
         mChildren.clear();
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        MaterialManager.getInstance().removeMaterial(mMaterial);
     }
 
     @Override

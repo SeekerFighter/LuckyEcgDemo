@@ -17,12 +17,15 @@ import com.seeker.luckychart.render.AbstractChartDataRenderer;
 import com.seeker.luckychart.strategy.ecgrender.ECGRenderStrategy;
 import com.seeker.luckychart.utils.ChartUtils;
 
+import org.rajawali3d.Object3D;
 import org.rajawali3d.cameras.Camera2D;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
 import org.rajawali3d.primitives.Plane;
 import org.rajawali3d.scene.Scene;
+
+import java.util.List;
 
 /**
  * @author Seeker
@@ -83,6 +86,7 @@ public class ECGChartDataRender extends AbstractChartDataRenderer<ECGChartData> 
         if (endIndex > chartComputator.getMaxCoorport().right){
             endIndex = (int) chartComputator.getMaxCoorport().right;
             startIndex = endIndex - len;
+            startIndex = Math.max(0,startIndex);
         }
         float preX = 0f,preY = 0f;
         int preColor = 0;
@@ -182,9 +186,14 @@ public class ECGChartDataRender extends AbstractChartDataRenderer<ECGChartData> 
 
     private void destroyChild(){
         Scene scene = chartView.getChartGlRenderer().getCurrentScene();
-        scene.removeChild(ecgLine);
-        ecgLine.destroy();
-        ecgLine = null;
-        scene.removeChild(bpmPlane);
+        List<Object3D> childs = scene.getChildrenCopy();
+        if (childs.contains(ecgLine)) {
+            scene.removeChild(ecgLine);
+            ecgLine.destroy();
+            ecgLine = null;
+        }
+        if (childs.contains(bpmPlane)) {
+            scene.removeChild(bpmPlane);
+        }
     }
 }
