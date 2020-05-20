@@ -23,8 +23,6 @@ import java.util.Stack;
  */
 public class ECGChartAxesRenderer implements LuckyAxesRenderer {
 
-    private static final String TAG = "ECGChartAxesRenderer";
-
     private ECGChartView chartView;
 
     private ECGLine outLine,innerLine;
@@ -56,18 +54,25 @@ public class ECGChartAxesRenderer implements LuckyAxesRenderer {
 
     @Override
     public void drawInBackground() {
-        drawHCellLine();
-        drawVCellLine();
+        ECGRenderStrategy renderStrategy = chartView.getECGRenderStrategy();
+        int count = renderStrategy.getEcgLineCount();
+        float space = renderStrategy.getEcgPortSpace();
+        float singleHeight = chartView.getChartComputator().getSingleEcgChartHeight();
+        for (int i = 0;i < count;i++){
+            float offset = (space+singleHeight)*i;
+            drawHCellLine(offset);
+            drawVCellLine(offset,renderStrategy.getYCellCounts()*renderStrategy.getCellWidth()+offset);
+        }
         outLine.setPoints(outVectors);
         innerLine.setPoints(innerVectors);
-        chartView.getChartGlRenderer().getCurrentScene().addChildAt(innerLine.init(),0);
-        chartView.getChartGlRenderer().getCurrentScene().addChildAt(outLine.init(),1);
+        chartView.getChartGlRenderer().getCurrentScene().addChild(innerLine.init());
+        chartView.getChartGlRenderer().getCurrentScene().addChild(outLine.init());
     }
 
     /**
      * 绘制水平网格线
      */
-    private void drawHCellLine(){
+    private void drawHCellLine(float yOffset){
         ECGRenderStrategy renderStrategy = chartView.getECGRenderStrategy();
         int vCellCounts = renderStrategy.getYCellCounts();
         int innerCellCounts = renderStrategy.getInnerCellCounts();
@@ -76,7 +81,7 @@ public class ECGChartAxesRenderer implements LuckyAxesRenderer {
         float startX = 0,startY,
                 stopX = chartComputator.getChartContentRect().width(),stopY;
         for (int i = 0; i < vCellCounts+1;++i){
-            startY = stopY = i * cellWidth;
+            startY = stopY = i * cellWidth+yOffset;
             if (i == 0){
                 startY = stopY = startY + renderStrategy.getOuterThinkLineWidth()/2;
                 PointF pointF = chartComputator.screenToCartesian(startX,startY);
@@ -106,14 +111,13 @@ public class ECGChartAxesRenderer implements LuckyAxesRenderer {
     /**
      * 绘制竖直网格线
      */
-    private void drawVCellLine(){
+    private void drawVCellLine(float startY,float stopY){
         ECGRenderStrategy renderStrategy = chartView.getECGRenderStrategy();
         int hCellCounts = renderStrategy.getXCellCounts();
         int innerCellCounts = renderStrategy.getInnerCellCounts();
         float cellWidth = renderStrategy.getCellWidth();
         ChartComputator chartComputator = chartView.getChartComputator();
-        float startX,startY = 0,stopX,
-                stopY = chartComputator.getChartContentRect().height();
+        float startX,stopX;
         for (int i = 0; i < hCellCounts+1;++i){
             startX = stopX = i * cellWidth;
             if (i == 0){

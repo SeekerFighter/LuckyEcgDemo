@@ -114,9 +114,4 @@ public class ECGPointValue extends PointValue implements Cloneable{
     public void setIndex(int index) {
         this.index = index;
     }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 
 import com.seeker.luckychart.charts.AbstractChartView;
 import com.seeker.luckychart.model.Coordinateport;
+import com.seeker.luckychart.strategy.ecgrender.ECGRenderStrategy;
 
 import org.rajawali3d.cameras.Camera2D;
 
@@ -64,6 +65,8 @@ public final class ChartComputator {
     private AbstractChartView.LuckyChartRenderer chartRenderer;
 
     private final PointF pointF = new PointF();
+
+    private ECGRenderStrategy renderStrategy;
 
     private ChartComputator(Context context){
         final DisplayMetrics dm = context.getResources().getDisplayMetrics();
@@ -203,6 +206,18 @@ public final class ChartComputator {
         return dataContentRect.bottom - pixelOffset;
     }
 
+    /**
+     * 转化为实际手机物理坐标
+     * @param y 虚拟坐标
+     * @return
+     */
+    public final float computeECGRawY(float y,float bottom){
+        float singleHeight = getSingleEcgChartHeight();
+        float pixelOffset = (y - visibleCoorport.bottom)*(singleHeight / visibleCoorport.height());
+        return bottom - pixelOffset;
+    }
+
+
     public void computeScrollSurfaceSize(Point out) {
         out.set((int) (maxCoorport.width() * dataContentRect.width() / visibleCoorport.width()),
                 (int) (maxCoorport.height() * dataContentRect.height() / visibleCoorport.height()));
@@ -280,4 +295,17 @@ public final class ChartComputator {
     public AbstractChartView.LuckyChartRenderer getChartRenderer() {
         return chartRenderer;
     }
+
+    public void setRenderStrategy(ECGRenderStrategy renderStrategy) {
+        this.renderStrategy = renderStrategy;
+    }
+
+    //返回单个ecg图波纹高度
+    public float getSingleEcgChartHeight(){
+        float height = getChartContentRect().height();
+        float space = renderStrategy.getEcgPortSpace();
+        int count = renderStrategy.getEcgLineCount();
+        return (height-space*(count-1))/count;
+    }
+
 }

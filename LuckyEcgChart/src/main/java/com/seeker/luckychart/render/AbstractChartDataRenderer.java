@@ -39,16 +39,16 @@ public abstract class AbstractChartDataRenderer<ChartData extends AbsChartData> 
             ChartLogger.wTag(TAG,"checkDataAvailable(),chartData == null.");
             return false;
         }
-        AbsContainer container = chartData.getDataContainer();
-        if (container == null){
+        AbsContainer[] containers = chartData.getDataContainer();
+        if (containers == null || containers.length == 0){
             ChartLogger.wTag(TAG,"checkDataAvailable(),container == null.");
             return false;
         }
-        Object[] values = container.getValues();
-        if (values == null || values.length == 0){
-            ChartLogger.wTag(TAG,"checkDataAvailable(),empty values ");
-            return false;
-        }
+//        Object[] values = container.getValues();
+//        if (values == null || values.length == 0){
+//            ChartLogger.wTag(TAG,"checkDataAvailable(),empty values ");
+//            return false;
+//        }
         return true;
     }
 }

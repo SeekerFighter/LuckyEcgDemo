@@ -6,7 +6,13 @@
         <attr name="isTouchable" format="boolean"/><!--是否可以响应触摸-->
         <attr name="yOuterCellCounts" format="integer"/><!--Y轴大格子个数-->
 
-    </declare-styleable>
+        <attr name="ecgLineCount" format="integer"/><!--心电图波形个数-->
+        <attr name="ecgportSpace" format="dimension"/><!--心电图波形绘制局域间隔-->
 
+        <attr name="markTextStyle" format="string"/><!--心博标注文字类型:14,4:文字大小，线宽-->
+
+        <attr name="canLineBound" format="boolean"/><!--心电波形是否可以越过自己的绘制区域-->
+        
+    </declare-styleable>
 
 </resources>

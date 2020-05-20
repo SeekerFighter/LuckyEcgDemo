@@ -25,7 +25,7 @@ public class ECGRealTimeActivity extends AppCompatActivity {
 
     private ECGChartView ecgChartView;
 
-    private ECGPointValue[] mValues;
+    private ECGPointValue[][] mValues;
 
     private int index = 0;
 
@@ -45,8 +45,14 @@ public class ECGRealTimeActivity extends AppCompatActivity {
                     return;
                 }
                 int count = 4;
-                if (index+count < mValues.length) {
-                    ecgChartView.updatePointsToRender(Arrays.copyOfRange(mValues, index, index + count));
+                if (index+count < mValues[0].length) {
+                    int lineCount = ecgChartView.getECGRenderStrategy().getEcgLineCount();
+                    ECGPointValue[][] values = new ECGPointValue[lineCount][];
+                    for (int i = 0;i < lineCount;i++){
+                        ECGPointValue[] value = Arrays.copyOfRange(mValues[i], index, index + count);
+                        values[i] = value;
+                    }
+                    ecgChartView.updatePointsToRender(values);
                     index += count;
                 }
             }
@@ -56,7 +62,6 @@ public class ECGRealTimeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ecgChartView.onPause();
-                ecgChartView.reset();
                 ecgChartView.setMode(UIMode.TRANSLATE);
                 ecgChartView.onResume();
             }
@@ -66,7 +71,6 @@ public class ECGRealTimeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ecgChartView.onPause();
-                ecgChartView.reset();
                 ecgChartView.setMode(UIMode.ERASE);
                 ecgChartView.onResume();
             }
@@ -89,7 +93,7 @@ public class ECGRealTimeActivity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class LoadTask extends AsyncTask<Void, Integer, ECGPointValue[]> {
+    private class LoadTask extends AsyncTask<Void, Integer, ECGPointValue[][]> {
 
         @Override
         protected void onPreExecute() {
@@ -97,13 +101,18 @@ public class ECGRealTimeActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ECGPointValue[] doInBackground(Void... voids) {
-            ECGDataParse dataParse = new ECGDataParse(ECGRealTimeActivity.this);
-            return dataParse.getValues();
+        protected ECGPointValue[][] doInBackground(Void... voids) {
+            int count = ecgChartView.getECGRenderStrategy().getEcgLineCount();
+            ECGPointValue[][] values = new ECGPointValue[count][];
+            for (int i = 0;i<count;i++) {
+                ECGDataParse dataParse = new ECGDataParse(ECGRealTimeActivity.this);
+                values[i] = dataParse.getValues();
+            }
+            return values;
         }
 
         @Override
-        protected void onPostExecute(ECGPointValue[] values) {
+        protected void onPostExecute(ECGPointValue[][] values) {
             mValues = values;
             ready = true;
             ChartLogger.d("onPostExecute() called:"+mValues.length);

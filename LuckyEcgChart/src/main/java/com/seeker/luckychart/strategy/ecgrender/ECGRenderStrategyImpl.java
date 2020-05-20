@@ -1,5 +1,7 @@
 package com.seeker.luckychart.strategy.ecgrender;
 
+import android.text.TextUtils;
+
 import com.seeker.luckychart.utils.ChartLogger;
 
 /**
@@ -23,13 +25,21 @@ public class ECGRenderStrategyImpl implements ECGRenderStrategy{
 
     private int defaultYOuterCellCounts = DEFAULT_OUTER_CELLCOUNTS_Y;//just for scale
 
-    private int yCellCountsPerMV = TOTALCELLS_PERMV;//纵向以mv包含几个小格子
+    private int yCellCountsPerMV = TOTALCELLS_PERMV;//纵向1mv包含几个小格子
 
     private boolean hasMeasured = false;
 
     private int measuredWith;
 
     private int measuredHeight;
+
+    private int ecgLineCount = 1;
+
+    private float ecgportSpace = 30;
+
+    private float[] markTextStyle = {14,4};
+
+    private boolean canLineBound = false;
 
     private ECGRenderStrategyImpl(){
     }
@@ -147,5 +157,53 @@ public class ECGRenderStrategyImpl implements ECGRenderStrategy{
      */
     private int defaultXMaxCellCounts(){
         return DEFAULT_MAX_OUTERCELL_COUNT * getInnerCellCounts();
+    }
+
+    @Override
+    public void setEcgLineCount(int ecgLineCount) {
+        this.ecgLineCount = ecgLineCount;
+    }
+
+    @Override
+    public int getEcgLineCount() {
+        return ecgLineCount;
+    }
+
+    @Override
+    public void setEcgPortSpace(float space) {
+        this.ecgportSpace = space;
+    }
+
+    @Override
+    public float getEcgPortSpace() {
+        return ecgportSpace;
+    }
+
+    @Override
+    public void setMarkTextStyle(String style) {
+        if (!TextUtils.isEmpty(style)){
+            String[] strings = style.split(",");
+            if (strings.length > 0){
+                markTextStyle[0] = Float.parseFloat(strings[0]);
+            }
+            if (strings.length > 1){
+                markTextStyle[1] = Float.parseFloat(strings[1]);
+            }
+        }
+    }
+
+    @Override
+    public float[] getMarkTextStyle() {
+        return markTextStyle;
+    }
+
+    @Override
+    public void setCanLineBound(boolean canLineBound) {
+        this.canLineBound = canLineBound;
+    }
+
+    @Override
+    public boolean isCanLineBound() {
+        return canLineBound;
     }
 }

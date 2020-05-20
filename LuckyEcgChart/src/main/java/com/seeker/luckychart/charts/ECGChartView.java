@@ -31,7 +31,7 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
 
     private Coordinateport defaultCoordinateport = new Coordinateport();
 
-    private int measureResult[] = new int[2];
+    private int[] measureResult = new int[2];
 
     private ECGRealtimeComputator realtimeComputator;
 
@@ -53,6 +53,8 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
         gestureFactory = ECGStrategyFactory.create(this);
         renderStrategy = gestureFactory.getECGRenderStrategy();
         applyAttributes(context,attrs);
+        chartComputator.setRenderStrategy(renderStrategy);
+        realtimeComputator.setEcgLineContainerCount(renderStrategy.getEcgLineCount());
     }
 
     private void applyAttributes(Context context, AttributeSet attrs) {
@@ -65,6 +67,14 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
                 setTouchable(array.getBoolean(attr,false));
             }else if (attr == R.styleable.ECGChartView_yOuterCellCounts){
                 renderStrategy.setYOuterCellCounts(array.getInt(attr,ECGRenderStrategyImpl.DEFAULT_OUTER_CELLCOUNTS_Y));
+            }else if (attr == R.styleable.ECGChartView_ecgLineCount){
+                renderStrategy.setEcgLineCount(array.getInt(attr,1));
+            }else if (attr == R.styleable.ECGChartView_ecgportSpace){
+                renderStrategy.setEcgPortSpace(array.getDimensionPixelSize(attr,30));
+            }else if (attr == R.styleable.ECGChartView_markTextStyle){
+                renderStrategy.setMarkTextStyle(array.getString(attr));
+            }else if (attr == R.styleable.ECGChartView_canLineBound){
+                renderStrategy.setCanLineBound(array.getBoolean(attr,false));
             }
         }
         array.recycle();
@@ -86,7 +96,8 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
         final int measuredWithSize = getMeasuredWidth();
         final ECGRenderStrategy strategy = renderStrategy;
         strategy.onViewMeasured(measuredWithSize,getMeasuredHeight(),measureResult);
-        setMeasuredDimension(measureResult[0],measureResult[1]);
+        int count = strategy.getEcgLineCount();
+        setMeasuredDimension(measureResult[0], (int) (measureResult[1]*count+(count-1)*strategy.getEcgPortSpace()));
         defaultCoordinateport.set(0,strategy.getYMaxMvs()/2,
                 strategy.getXTotalPointCounts(),-strategy.getYMaxMvs()/2);
         setChartVisibleCoordinateport(defaultCoordinateport);
@@ -95,15 +106,29 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
 
     @Override
     public void setChartData(final ECGChartData chartData) {
-        ECGPointContainer container = chartData.getDataContainer();
-        if (container != null){
-            ECGPointValue[] values = container.getValues();
-            if (values != null){
-                chartComputator.getMaxCoorport().right = values.length;
-                chartComputator.getVisibleCoorport().left = 0;
-                chartComputator.getVisibleCoorport().right = renderStrategy.getXTotalPointCounts();
+        ECGPointContainer[] containers = chartData.getDataContainer();
+
+        if (containers != null && containers.length > 0){
+            int right = 0;
+            for (ECGPointContainer c:containers){
+                ECGPointValue[] values = c.getValues();
+                if (values != null){
+                    right = Math.max(right,values.length);
+                }
             }
+            chartComputator.getMaxCoorport().right = right;
+            chartComputator.getVisibleCoorport().left = 0;
+            chartComputator.getVisibleCoorport().right = renderStrategy.getXTotalPointCounts();
         }
+//
+//        if (container != null){
+//            ECGPointValue[] values = container.getValues();
+//            if (values != null){
+//                chartComputator.getMaxCoorport().right = values.length;
+//                chartComputator.getVisibleCoorport().left = 0;
+//                chartComputator.getVisibleCoorport().right = renderStrategy.getXTotalPointCounts();
+//            }
+//        }
         super.setChartData(chartData);
     }
 
@@ -120,8 +145,9 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
     }
 
     @Override
+    @Deprecated
     public void repairPointRPeak(int rposition,int type,String tyoeAnno,boolean needRPeak){
-        realtimeComputator.repairPointRPeak(rposition, type, tyoeAnno,needRPeak);
+//        realtimeComputator.repairPointRPeak(rposition, type, tyoeAnno,needRPeak);
     }
 
     @Override
@@ -176,8 +202,14 @@ public class ECGChartView extends AbstractChartView<ECGChartData> implements Rea
         });
     }
 
-    public void updatePointsToRender(ECGPointValue... values){
-        realtimeComputator.updatePointsToRender(values);
+    public void updatePointsToRender(int targetLineIndex, ECGPointValue... values){
+        realtimeComputator.updatePointsToRender(targetLineIndex,values);
+    }
+
+    public void updatePointsToRender(ECGPointValue[]... values){
+        for (int i = 0,len = values.length;i < len;i++) {
+            realtimeComputator.updatePointsToRender(i,values[i]);
+        }
     }
 
     /**

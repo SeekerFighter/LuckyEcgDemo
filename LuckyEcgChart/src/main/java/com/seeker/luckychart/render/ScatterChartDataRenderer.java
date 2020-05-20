@@ -50,8 +50,11 @@ public class ScatterChartDataRenderer extends AbstractChartDataRenderer<ScatterC
     public void onDataRender() {
         if (checkDataAvailable()){
             ScatterChartData chartData = chartProvider.getChartData();
-            PointContainer container = chartData.getDataContainer();
+            PointContainer container = chartData.getDataContainer()[0];
             final PointValue[] values = container.getValues();
+            if (values == null){
+                return;
+            }
             drawPoint(values,container.getPointColor(),container.getPointRadius());
         }
     }

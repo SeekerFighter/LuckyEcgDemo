@@ -3,7 +3,6 @@ package com.seeker.luckychart.glmodel;
 import android.graphics.Color;
 import android.opengl.GLES20;
 import android.util.SparseArray;
-
 import org.rajawali3d.BufferInfo;
 import org.rajawali3d.Object3D;
 import org.rajawali3d.materials.Material;
@@ -17,8 +16,6 @@ import java.nio.IntBuffer;
  * @describe 心电图模型
  */
 public class ECGLine3D extends Object3D{
-
-    private static final int DEFAULT_LINE_COLOR = 0xFF021F52;//折线默认颜色
 
     private int numPoints;
 

@@ -120,10 +120,17 @@ public class ECGStaticActivity extends AppCompatActivity {
         protected void onPostExecute(ECGPointValue[] values) {
             ChartLogger.d("onPostExecute() called:"+values.length);
 
-            ECGPointContainer container = ECGPointContainer.create(values);
-            container.setDrawRpeak(true);
-            container.setDrawNoise(true);
-            ECGChartData chartData = ECGChartData.create(container);
+            int count = ecgChartView.getECGRenderStrategy().getEcgLineCount();
+
+            ECGPointContainer[] containers = new ECGPointContainer[count];
+
+            for (int i = 0;i < count;i++){
+                ECGPointContainer container1 = ECGPointContainer.create(values);
+                container1.setDrawRpeak(true);
+                container1.setDrawNoise(true);
+                containers[i] = container1;
+            }
+            ECGChartData chartData = ECGChartData.create(containers);
             ecgChartView.setChartData(chartData);
             ecgChartView.applyRenderUpdate();
         }

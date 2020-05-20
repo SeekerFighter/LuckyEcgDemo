@@ -15,7 +15,7 @@ import com.seeker.luckychart.provider.DataProvider;
 
 public abstract class AbsChartData<Container extends AbsContainer> implements DataProvider<Container>{
 
-    private Container container;
+    private Container[] containers;
 
     private ChartAxis leftAxis;
 
@@ -29,8 +29,9 @@ public abstract class AbsChartData<Container extends AbsContainer> implements Da
 
     }
 
-    AbsChartData(Container container) {
-        this.container = container;
+    @SafeVarargs
+    AbsChartData(Container... container) {
+        this.containers = container;
     }
 
     @Override
@@ -75,26 +76,35 @@ public abstract class AbsChartData<Container extends AbsContainer> implements Da
 
     @Override
     public boolean containDataContainer(Container container) {
-        return this.container != null && this.container.hashCode() == container.hashCode();
-    }
-
-    @Override
-    public void setDataContainer(Container container) {
-        if (!containDataContainer(container)) {
-            this.container = container;
+        if (this.containers == null || this.containers.length == 0){
+            return false;
         }
+        for (Container c:containers){
+            if (c.hashCode() == container.hashCode()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SafeVarargs
+    @Override
+    public final void setDataContainer(Container... container) {
+        this.containers = container;
     }
 
     @Override
-    public Container getDataContainer() {
-        return this.container;
+    public Container[] getDataContainer() {
+        return this.containers;
     }
 
     @CallSuper
     @Override
     public void clear() {
-        if (container != null){
-            container.clear();
+        if (containers != null){
+            for (Container c:containers){
+                c.clear();
+            }
         }
     }
 

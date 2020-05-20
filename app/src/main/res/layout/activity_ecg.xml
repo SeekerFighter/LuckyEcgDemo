@@ -14,7 +14,9 @@
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         app:renderMode="RENDER_CONTINUOUS"
-        app:yOuterCellCounts="10"/>
+        app:yOuterCellCounts="6"
+        app:ecgLineCount="2"
+        app:markTextStyle="10,2"/>
 
     <ViewStub
         android:id="@+id/realTimeVS"

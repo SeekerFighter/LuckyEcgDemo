@@ -61,4 +61,22 @@ public interface ECGRenderStrategy {
      */
     boolean gain(int yCellCountsPerMv);
 
+    void setEcgLineCount(int count);
+
+    //返回心电图波纹个数
+    int getEcgLineCount();
+
+    void setEcgPortSpace(float space);
+
+    //心电图波纹绘制区域间隔
+    float getEcgPortSpace();
+
+    void setMarkTextStyle(String style);
+
+    float[] getMarkTextStyle();
+
+    void setCanLineBound(boolean canLineBound);
+
+    boolean isCanLineBound();
+
 }
